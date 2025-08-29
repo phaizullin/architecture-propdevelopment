@@ -1,0 +1,54 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cluster-viewer
+  labels:
+    app.kubernetes.io/name: propdevelopment-rbac
+    app.kubernetes.io/component: cluster-viewer-role
+    app.kubernetes.io/managed-by: manual
+rules:
+# Чтение основных ресурсов приложений
+- apiGroups: ["apps"]
+  resources: ["deployments", "replicasets", "daemonsets", "statefulsets"]
+  verbs: ["get", "list", "watch"]
+
+- apiGroups: [""]
+  resources: ["pods", "services", "endpoints", "configmaps", "namespaces"]
+  verbs: ["get", "list", "watch"]
+
+# Чтение логов приложений
+- apiGroups: [""]
+  resources: ["pods/log", "pods/status"]
+  verbs: ["get", "list", "watch"]
+
+# Ingress для понимания архитектуры
+- apiGroups: ["networking.k8s.io"]
+  resources: ["ingresses", "networkpolicies"]
+  verbs: ["get", "list", "watch"]
+
+# Nodes для общего понимания кластера
+- apiGroups: [""]
+  resources: ["nodes"]
+  verbs: ["get", "list", "watch"]
+
+# Events для понимания состояния системы
+- apiGroups: [""]
+  resources: ["events"]
+  verbs: ["get", "list", "watch"]
+
+# Resource quotas для понимания ограничений
+- apiGroups: [""]
+  resources: ["resourcequotas", "limitranges"]
+  verbs: ["get", "list", "watch"]
+
+# HPA для понимания автомасштабирования
+- apiGroups: ["autoscaling"]
+  resources: ["horizontalpodautoscalers"]
+  verbs: ["get", "list", "watch"]
+
+# Metrics для мониторинга
+- apiGroups: ["metrics.k8s.io"]
+  resources: ["*"]
+  verbs: ["get", "list"]
+
+# Запрет на secrets и любые изменения - только чтение
